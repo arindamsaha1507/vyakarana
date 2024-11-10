@@ -224,16 +224,9 @@ def collect_all_verbs():
 
     conn.commit()
 
-    print("Finished collecting verbs")
+    num_verbs = conn.execute("SELECT COUNT(*) FROM verbs").fetchone()[0]
 
-    # print("Sample verbs:")
-    # for row in conn.execute("SELECT * FROM verbs LIMIT 10"):
-    #     print(row)
-
-    lakaras = conn.execute("SELECT DISTINCT lakara FROM verbs").fetchall()
-    print("Lakaras:", lakaras)
-    pratyayas = conn.execute("SELECT DISTINCT pratyaya FROM verbs").fetchall()
-    print("Pratyayas:", pratyayas)
+    print(f"Finished collecting {num_verbs} verbs")
 
     conn.close()
 
@@ -241,7 +234,7 @@ def collect_all_verbs():
 def main():
     """Main function to create all the tables in the database."""
     # create_all_dhatu_related_tables()
-    # collect_all_verbs()
+    collect_all_verbs()
 
 
 if __name__ == "__main__":
