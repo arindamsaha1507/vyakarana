@@ -8,6 +8,19 @@ import pathlib
 import pandas as pd
 
 
+GANA_DICT = {
+    1: "भ्वादिगण",
+    2: "अदादिगण",
+    3: "जुहोत्यादिगण",
+    4: "दिवादिगण",
+    5: "स्वादिगण",
+    6: "तुदादिगण",
+    7: "रुधादिगण",
+    8: "तनादिगण",
+    9: "क्र्यादिगण",
+    10: "चुरादिगण",
+}
+
 LAKARA_DICT = {
     "lat": "लट्",
     "lit": "लिट्",
@@ -43,7 +56,7 @@ VACHANA_DICT = {
     "३": "बहुवचन",
 }
 
-PADA_DICT = {"a": "आत्मनेपदी", "p": "परस्मैपदी"}
+PADA_DICT = {"a": "आत्मनेपदम्", "p": "परस्मैपदम्"}
 
 
 def initiate_database() -> sqlite3.Connection:
@@ -160,6 +173,7 @@ def create_all_dhatu_related_tables():
         file
         for file in files
         if file.name not in ["data.txt", "dhatuforms_krut.txt", "dhatuprayogas.txt"]
+        and "vidyut" not in file.name
     ]
 
     with multiprocessing.Pool() as pool:
@@ -186,7 +200,7 @@ def collect_all_verbs():
     )
 
     for index, table in enumerate(tables):
-        print(f"Collecting verbs from {index}/{len(tables)}: {table}")
+        # print(f"Collecting verbs from {index}/{len(tables)}: {table}")
 
         df = pd.read_sql(f"SELECT * FROM {table}", conn)
 
@@ -231,10 +245,50 @@ def collect_all_verbs():
     conn.close()
 
 
+def query_verb(verb: str):
+
+    conn = sqlite3.connect("database.db")
+
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM verbs WHERE verb = ?", (verb,))
+
+    rows = cursor.fetchall()
+
+    if not rows:
+        print(f"Verb {verb} not found")
+        return
+
+    for row in rows:
+
+        cursor.execute("SELECT * FROM dhatu WHERE baseindex = ?", (row[1],))
+        dhatu = cursor.fetchone()
+        gana = GANA_DICT[int(dhatu[1].split(".")[0])]
+
+        string = f"{row[0]} इति धातुपाठस्य {dhatu[3]} {dhatu[8]} इति पाठात् {dhatu[2]} इति {gana}स्य धातोः "
+
+        if row[4] == "-":
+            string += "कर्तरि प्रयोगे "
+        elif row[4] == "यक्":
+            string += "भावकर्म्मणि प्रयोगे "
+        else:
+            string += f"{row[4]} प्रत्यये परे "
+
+        string += f"{row[2]}-लकार-{row[5]}-{row[6]}-{row[3]} रूपम् ॥"
+
+        print(string)
+
+        print(row)
+        print(dhatu)
+
+    conn.close()
+
+
 def main():
     """Main function to create all the tables in the database."""
     # create_all_dhatu_related_tables()
-    collect_all_verbs()
+    # collect_all_verbs()
+    query_verb("पठति")
 
 
 if __name__ == "__main__":
