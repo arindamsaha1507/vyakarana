@@ -230,7 +230,7 @@ def collect_all_verbs():
     cursor.execute("DROP TABLE IF EXISTS verbs")
 
     cursor.execute(
-        "CREATE TABLE verbs (verb TEXT, baseindex TEXT, lakara TEXT, pada TEXT, pratyaya TEXT, purusha TEXT, vachana TEXT)"
+        "CREATE TABLE verbs (verb TEXT, baseindex TEXT, lakara TEXT, pada TEXT, pratyaya TEXT, purusha TEXT, vachana TEXT)"  # pylint: disable=line-too-long
     )
 
     for table in tables:
@@ -272,7 +272,7 @@ def query_verb(verb: str):
         dhatu = cursor.fetchone()
         gana = GANA_DICT[int(dhatu[1].split(".")[0])]
 
-        string = f"{row[0]} इति धातुपाठस्य {dhatu[3]} {dhatu[8]} इति पाठात् {dhatu[2]} इति {gana}स्य धातोः "
+        string = f"{row[0]} इति धातुपाठस्य {dhatu[3]} {dhatu[8]} इति पाठात् {dhatu[2]} इति {gana}स्य धातोः "  # pylint: disable=line-too-long
 
         if row[4] == "-":
             string += "कर्तरि प्रयोगे "
@@ -291,11 +291,69 @@ def query_verb(verb: str):
     conn.close()
 
 
+def parse_vachaspatyam():
+    """Parse the vachaspatyam file."""
+
+    filename = pathlib.Path("kosha").joinpath("vcp.json")
+
+    with open(filename, encoding="utf-8") as f:
+        data = json.load(f)
+
+    conn = sqlite3.connect("database.db")
+
+    cursor = conn.cursor()
+
+    cursor.execute("DROP TABLE IF EXISTS vachaspatyam")
+
+    cursor.execute("CREATE TABLE vachaspatyam (word TEXT, gender TEXT, meaning TEXT)")
+
+    # print(len(data["data"]["words"]))
+
+    raw_words = data["data"]["words"]
+
+    for word, refs in raw_words.items():
+        for ref in refs.split(","):
+            # print(word, ref)
+
+            text = data["data"]["text"][ref]
+            classification = text[0].split(" ")[1]
+
+            if classification[-1] == "०":
+
+                if classification == "पु०":
+                    genders = ["पुंलिङ्गम्"]
+                elif classification == "स्त्री०":
+                    genders = ["स्त्रीलिङ्गम्"]
+                elif classification == "न०":
+                    genders = ["नपुंसकलिङ्गम्"]
+                elif classification == "अव्य०":
+                    genders = ["अव्ययम्"]
+                elif classification == "त्रि०":
+                    genders = ["पुंलिङ्गम्", "स्त्रीलिङ्गम्", "नपुंसकलिङ्गम्"]
+                elif classification in ["पुंन", "अस्त्री"]:
+                    genders = ["पुंलिङ्गम्", "नपुंसकलिङ्गम्"]
+                else:
+                    continue
+
+                for gender in genders:
+
+                    cursor.execute(
+                        "INSERT INTO vachaspatyam VALUES (?, ?, ?)",
+                        (word, gender, text[0]),
+                    )
+
+    conn.commit()
+
+    conn.close()
+
+
 def main():
     """Main function to create all the tables in the database."""
     # create_all_dhatu_related_tables()
     # collect_all_verbs()
-    query_verb("अस्मि")
+    # query_verb("अस्मि")
+
+    parse_vachaspatyam()
 
 
 if __name__ == "__main__":
