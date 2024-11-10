@@ -180,6 +180,40 @@ def create_all_dhatu_related_tables():
         pool.starmap(create_dhaturupa, [(file,) for file in files])
 
 
+def add_verbs_to_database(
+    row: dict[str, str], table: str, column_name: str, cursor: sqlite3.Cursor
+):
+    """Add the verbs to the database."""
+
+    for word in row[column_name].split(","):
+
+        purusha, vachana = column_name.split(".")
+
+        parts = table.split("_")
+
+        lakara = parts[-1]
+        pada = lakara[0]
+        lakara = lakara[1:]
+
+        if len(parts) == 3:
+            pratyaya = parts[1]
+        else:
+            pratyaya = "-"
+
+        cursor.execute(
+            "INSERT INTO verbs VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (
+                word,
+                row["baseindex"],
+                LAKARA_DICT[lakara],
+                PADA_DICT[pada],
+                PRATYAYA_DICT[pratyaya],
+                PURUSHA_DICT[purusha],
+                VACHANA_DICT[vachana],
+            ),
+        )
+
+
 def collect_all_verbs():
     """Collect all the verbs from the dhaturupa tables."""
 
@@ -199,42 +233,14 @@ def collect_all_verbs():
         "CREATE TABLE verbs (verb TEXT, baseindex TEXT, lakara TEXT, pada TEXT, pratyaya TEXT, purusha TEXT, vachana TEXT)"
     )
 
-    for index, table in enumerate(tables):
-        # print(f"Collecting verbs from {index}/{len(tables)}: {table}")
+    for table in tables:
 
         df = pd.read_sql(f"SELECT * FROM {table}", conn)
 
         for _, row in df.iterrows():
             for column in df.columns[1:]:
                 if row[column]:
-
-                    for word in row[column].split(","):
-
-                        purusha, vachana = column.split(".")
-
-                        parts = table.split("_")
-
-                        lakara = parts[-1]
-                        pada = lakara[0]
-                        lakara = lakara[1:]
-
-                        if len(parts) == 3:
-                            pratyaya = parts[1]
-                        else:
-                            pratyaya = "-"
-
-                        cursor.execute(
-                            "INSERT INTO verbs VALUES (?, ?, ?, ?, ?, ?, ?)",
-                            (
-                                word,
-                                row["baseindex"],
-                                LAKARA_DICT[lakara],
-                                PADA_DICT[pada],
-                                PRATYAYA_DICT[pratyaya],
-                                PURUSHA_DICT[purusha],
-                                VACHANA_DICT[vachana],
-                            ),
-                        )
+                    add_verbs_to_database(row, table, column, cursor)
 
     conn.commit()
 
@@ -246,6 +252,7 @@ def collect_all_verbs():
 
 
 def query_verb(verb: str):
+    """Query the verb from the database."""
 
     conn = sqlite3.connect("database.db")
 
@@ -288,7 +295,7 @@ def main():
     """Main function to create all the tables in the database."""
     # create_all_dhatu_related_tables()
     # collect_all_verbs()
-    query_verb("पठति")
+    query_verb("अस्मि")
 
 
 if __name__ == "__main__":
