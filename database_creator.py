@@ -313,7 +313,6 @@ def parse_vachaspatyam():
 
     for word, refs in raw_words.items():
         for ref in refs.split(","):
-            # print(word, ref)
 
             text = data["data"]["text"][ref]
             classification = text[0].split(" ")[1]
@@ -333,6 +332,8 @@ def parse_vachaspatyam():
                 genders = ["पुंलिङ्गम्", "स्त्रीलिङ्गम्", "नपुंसकलिङ्गम्"]
             elif classification in ["पुंन", "अस्त्री"]:
                 genders = ["पुंलिङ्गम्", "नपुंसकलिङ्गम्"]
+            elif classification == "अव्य":
+                genders = ["अव्ययम्"]
             else:
                 continue
 
@@ -369,14 +370,157 @@ def query_vachaspatyam(word: str):
     conn.close()
 
 
+def create_nouns_table():
+    """Create the nouns table."""
+
+    conn = sqlite3.connect("database.db")
+
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM vachaspatyam")
+
+    data = cursor.fetchall()
+    words = [row[0] for row in data]
+    genders = [row[1] for row in data]
+
+    data_combined = list(zip(words, genders))
+
+    # print(data_combined)
+
+    gdict = {
+        "P": "पुंलिङ्गम्",
+        "S": "स्त्रीलिङ्गम्",
+        "N": "नपुंसकलिङ्गम्",
+        "I": "अव्ययम्",
+        "A": "सर्वलिङ्गम्",
+    }
+    grdict = {v: k for k, v in gdict.items()}
+
+    with open("shabda/data.txt", encoding="utf-8") as f:
+        data: list[dict[str, str]] = json.load(f)
+
+    with open("shabda/data2.txt", encoding="utf-8") as f:
+        data2: list[dict[str, str]] = json.load(f)
+
+    data = data | data2
+
+    data = data["data"]
+
+    special_words_data = []
+
+    for word in data:
+        # special_words_data[word["word"]] = gdict[word["linga"]]
+        special_words_data.append((word["word"], gdict[word["linga"]]))
+
+    print([word for word in special_words_data if word[0] == "अस्मद्"])
+    for word in special_words_data:
+        if word[1] == "सर्वलिङ्गम्":
+            special_words_data.append((word[0], "पुंलिङ्गम्"))
+            special_words_data.append((word[0], "स्त्रीलिङ्गम्"))
+            special_words_data.append((word[0], "नपुंसकलिङ्गम्"))
+
+    # print(special_words_data)
+
+    cursor.execute("DROP TABLE IF EXISTS nouns")
+
+    cursor.execute(
+        "CREATE TABLE nouns (pada TEXT, shabda TEXT, linga TEXT, vibhakti TEXT, vachana TEXT)"
+    )
+
+    for word in data_combined:
+
+        if word[1] == "अव्ययम्":
+            cursor.execute(
+                "INSERT INTO nouns VALUES (?, ?, ?, ?, ?)",
+                ("अव्ययम्", word[0], "अव्ययम्", "-", "-"),
+            )
+            # print(f"Avyayam: {word[0]} added")
+            continue
+
+        if word in special_words_data:
+            # print(f"Special word: {word} found")
+            if word[0] == "अस्मद्":
+                print(word)
+
+            forms = [
+                dd
+                for dd in data
+                if dd["word"] == word[0]
+                and ((dd["linga"] == grdict[word[1]] or dd["linga"] == "A"))
+            ]
+
+            if word[0] == "अस्मद्":
+                print(forms)
+
+            if not forms:
+                raise ValueError(f"Special word {word} not found in shabda")
+
+            for form in forms:
+
+                rupas = form["forms"].split(";")
+
+                for i, rupa in enumerate(rupas):
+
+                    if "," in rupa:
+                        raise ValueError(f"Comma found in rupa: {rupa}")
+
+                    all_rupa = rupa.split("-")
+
+                    for rr in all_rupa:
+
+                        if len(rr.split(" ")) == 2 and rr.split(" ")[0] == "हे":
+                            rr = rr.split(" ")[1]
+
+                        cursor.execute(
+                            "INSERT INTO nouns VALUES (?, ?, ?, ?, ?)",
+                            (rr, word[0], word[1], i // 3 + 1, i % 3 + 1),
+                        )
+
+            # print(forms)
+
+    conn.commit()
+
+    sample = conn.execute("SELECT * FROM nouns").fetchall()
+
+    print(f"Added {len(sample)} nouns")
+
+    sample = [word for word in sample if word[0] == "मम"]
+    print(sample)
+
+    conn.close()
+
+
+def query_noun(word: str):
+
+    conn = sqlite3.connect("database.db")
+
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM nouns WHERE pada = ?", (word,))
+
+    rows = cursor.fetchall()
+
+    if not rows:
+        print(f"Word {word} not found")
+        return
+
+    for row in rows:
+        print(row)
+
+    conn.close()
+
+
 def main():
     """Main function to create all the tables in the database."""
     # create_all_dhatu_related_tables()
     # collect_all_verbs()
-    # query_verb("अस्मि")
+    # query_verb("नौमि")
 
-    parse_vachaspatyam()
+    # parse_vachaspatyam()
     query_vachaspatyam("अस्मद्")
+
+    create_nouns_table()
+    query_noun("मम")
 
 
 if __name__ == "__main__":
