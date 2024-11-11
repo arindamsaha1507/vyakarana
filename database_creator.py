@@ -319,30 +319,52 @@ def parse_vachaspatyam():
             classification = text[0].split(" ")[1]
 
             if classification[-1] == "०":
+                classification = classification[:-1]
 
-                if classification == "पु०":
-                    genders = ["पुंलिङ्गम्"]
-                elif classification == "स्त्री०":
-                    genders = ["स्त्रीलिङ्गम्"]
-                elif classification == "न०":
-                    genders = ["नपुंसकलिङ्गम्"]
-                elif classification == "अव्य०":
-                    genders = ["अव्ययम्"]
-                elif classification == "त्रि०":
-                    genders = ["पुंलिङ्गम्", "स्त्रीलिङ्गम्", "नपुंसकलिङ्गम्"]
-                elif classification in ["पुंन", "अस्त्री"]:
-                    genders = ["पुंलिङ्गम्", "नपुंसकलिङ्गम्"]
-                else:
-                    continue
+            if classification == "पु":
+                genders = ["पुंलिङ्गम्"]
+            elif classification == "स्त्री":
+                genders = ["स्त्रीलिङ्गम्"]
+            elif classification == "न":
+                genders = ["नपुंसकलिङ्गम्"]
+            elif classification == "अव्य०":
+                genders = ["अव्ययम्"]
+            elif classification == "त्रि":
+                genders = ["पुंलिङ्गम्", "स्त्रीलिङ्गम्", "नपुंसकलिङ्गम्"]
+            elif classification in ["पुंन", "अस्त्री"]:
+                genders = ["पुंलिङ्गम्", "नपुंसकलिङ्गम्"]
+            else:
+                continue
 
-                for gender in genders:
+            for gender in genders:
 
-                    cursor.execute(
-                        "INSERT INTO vachaspatyam VALUES (?, ?, ?)",
-                        (word, gender, text[0]),
-                    )
+                cursor.execute(
+                    "INSERT INTO vachaspatyam VALUES (?, ?, ?)",
+                    (word, gender, text[0]),
+                )
 
     conn.commit()
+
+    conn.close()
+
+
+def query_vachaspatyam(word: str):
+    """Query the vachaspatyam database."""
+
+    conn = sqlite3.connect("database.db")
+
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM vachaspatyam WHERE word = ?", (word,))
+
+    rows = cursor.fetchall()
+
+    if not rows:
+        print(f"Word {word} not found")
+        return
+
+    for row in rows:
+        print(row)
 
     conn.close()
 
@@ -354,6 +376,7 @@ def main():
     # query_verb("अस्मि")
 
     parse_vachaspatyam()
+    query_vachaspatyam("अस्मद्")
 
 
 if __name__ == "__main__":
