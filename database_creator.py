@@ -413,11 +413,15 @@ def create_nouns_table():
         special_words_data.append((word["word"], gdict[word["linga"]]))
 
     print([word for word in special_words_data if word[0] == "अस्मद्"])
+
+    special_words_data_copy = special_words_data.copy()
     for word in special_words_data:
         if word[1] == "सर्वलिङ्गम्":
-            special_words_data.append((word[0], "पुंलिङ्गम्"))
-            special_words_data.append((word[0], "स्त्रीलिङ्गम्"))
-            special_words_data.append((word[0], "नपुंसकलिङ्गम्"))
+            special_words_data_copy.append((word[0], "पुंलिङ्गम्"))
+            special_words_data_copy.append((word[0], "स्त्रीलिङ्गम्"))
+            special_words_data_copy.append((word[0], "नपुंसकलिङ्गम्"))
+
+    special_words_data = special_words_data_copy
 
     # print(special_words_data)
 
@@ -512,11 +516,11 @@ def query_noun(word: str):
 
 def main():
     """Main function to create all the tables in the database."""
-    # create_all_dhatu_related_tables()
-    # collect_all_verbs()
-    # query_verb("नौमि")
+    create_all_dhatu_related_tables()
+    collect_all_verbs()
+    query_verb("नौमि")
 
-    # parse_vachaspatyam()
+    parse_vachaspatyam()
     query_vachaspatyam("अस्मद्")
 
     create_nouns_table()
