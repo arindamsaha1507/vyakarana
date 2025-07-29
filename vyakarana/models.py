@@ -10,91 +10,195 @@ from typing import List, Optional
 
 
 @dataclass
-class Sutra:
+class SutraIdentifier:
     """
-    Represents a Sanskrit grammar sutra with all its associated metadata.
+    Represents a unique identifier for a Sanskrit grammar sutra.
 
     Attributes:
-        i: Unique identifier for the sutra
-        a: Adhyaya (chapter) number
-        p: Pada (quarter) number
-        n: Sutra number within the pada
-        s: Sanskrit text of the sutra
-        e: English transliteration
+        adhyaya: Adhyaya (chapter) number (1-8)
+        pada: Pada (quarter) number (1-4)
+        number: Sutra number within the pada
+    """
+
+    adhyaya: int  # Adhyaya (chapter) - range 1-8
+    pada: int  # Pada (quarter) - range 1-4
+    number: int  # Sutra number within the pada
+
+    def __post_init__(self):
+        """Validate the sutra identifiers after initialization."""
+        if not (1 <= self.adhyaya <= 8):
+            raise ValueError(f"Adhyaya must be between 1 and 8, got {self.adhyaya}")
+        if not (1 <= self.pada <= 4):
+            raise ValueError(f"Pada must be between 1 and 4, got {self.pada}")
+        if self.number < 1:
+            raise ValueError(f"Sutra number must be positive, got {self.number}")
+
+    @property
+    def reference(self) -> str:
+        """Return a formatted reference like '1.1.1'."""
+        return f"{self.adhyaya}.{self.pada}.{self.number}"
+
+    def __str__(self) -> str:
+        """Return a readable string representation."""
+        return self.reference
+
+    def __repr__(self) -> str:
+        """Return a detailed string representation."""
+        return f"SutraIdentifier(adhyaya={self.adhyaya}, pada={self.pada}, number={self.number})"
+
+
+@dataclass
+class SutraText:
+    """
+    Represents the text content of a sutra in different scripts/languages.
+
+    Attributes:
+        sanskrit: Sanskrit text in Devanagari script
+        english: English transliteration
+    """
+
+    sanskrit: str  # Sanskrit text in Devanagari
+    english: str  # English transliteration
+
+    @property
+    def devanagari(self) -> str:
+        """Return the Sanskrit text in Devanagari (alias for sanskrit)."""
+        return self.sanskrit
+
+    @property
+    def transliteration(self) -> str:
+        """Return the English transliteration (alias for english)."""
+        return self.english
+
+    def __str__(self) -> str:
+        """Return a readable string representation."""
+        return self.sanskrit
+
+    def __repr__(self) -> str:
+        """Return a detailed string representation."""
+        return f"SutraText(sanskrit='{self.sanskrit}', english='{self.english}')"
+
+
+@dataclass
+class SutraReferences:
+    """
+    Represents various reference numbers and chapter information for a sutra.
+
+    Attributes:
         skn: Siddhanta Kaumudi number
         lskn: Laghu Siddhanta Kaumudi number
         mskn: Madhya Siddhanta Kaumudi number
         sskn: Sara Siddhanta Kaumudi number
         plskn: Paribhasha Laghu Siddhanta Kaumudi number
         lpn: Laghu Prakriya number
-        pc: Parsed components
         sk_chapter: Siddhanta Kaumudi chapter
         lsk_chapter: Laghu Siddhanta Kaumudi chapter
+    """
+
+    skn: int  # Siddhanta Kaumudi number
+    lskn: int  # Laghu Siddhanta Kaumudi number
+    mskn: int  # Madhya Siddhanta Kaumudi number
+    sskn: int  # Sara Siddhanta Kaumudi number
+    plskn: int  # Paribhasha Laghu Siddhanta Kaumudi number
+    lpn: int  # Laghu Prakriya number
+    sk_chapter: int  # Siddhanta Kaumudi chapter
+    lsk_chapter: int  # Laghu Siddhanta Kaumudi chapter
+
+    def __str__(self) -> str:
+        """Return a readable string representation."""
+        return f"SutraReferences(skn={self.skn}, lskn={self.lskn})"
+
+    def __repr__(self) -> str:
+        """Return a detailed string representation."""
+        return (
+            f"SutraReferences(skn={self.skn}, lskn={self.lskn}, mskn={self.mskn}, "
+            f"sskn={self.sskn}, plskn={self.plskn}, lpn={self.lpn}, "
+            f"sk_chapter={self.sk_chapter}, lsk_chapter={self.lsk_chapter})"
+        )
+
+
+@dataclass
+class Sutra:
+    """
+    Represents a Sanskrit grammar sutra with all its associated metadata.
+
+    Attributes:
+        identifier: Unique identifier for the sutra (SutraIdentifier object)
+        text: Text content of the sutra (SutraText object)
+        references: Reference numbers and chapters (SutraReferences object)
+        pc: Parsed components
         type: Type classification of the sutra
         an: Anuvrutti (continuation from previous sutras)
         ad: Additional data
         ss: Sanskrit with sandhi
-        rpn: Reference/position number
     """
 
-    i: str
-    a: str
-    p: str
-    n: str
-    s: str  # Sanskrit text
-    e: str  # English transliteration
-    skn: str
-    lskn: str
-    mskn: str
-    sskn: str
-    plskn: str
-    lpn: str
+    identifier: SutraIdentifier
+    text: SutraText
+    references: SutraReferences
     pc: str  # Parsed components
-    sk_chapter: str
-    lsk_chapter: str
     type: str
     an: str  # Anuvrutti
     ad: str  # Additional data
     ss: str  # Sanskrit with sandhi
-    rpn: str
 
     @property
     def adhyaya(self) -> int:
         """Return the adhyaya (chapter) as an integer."""
-        return int(self.a)
+        return self.identifier.adhyaya
 
     @property
     def pada(self) -> int:
         """Return the pada (quarter) as an integer."""
-        return int(self.p)
+        return self.identifier.pada
 
     @property
     def number(self) -> int:
         """Return the sutra number within the pada as an integer."""
-        return int(self.n)
+        return self.identifier.number
 
     @property
     def reference(self) -> str:
         """Return a formatted reference like '1.1.1'."""
-        return f"{self.a}.{self.p}.{self.n}"
+        return self.identifier.reference
+
+    @property
+    def skn(self) -> int:
+        """Return the Siddhanta Kaumudi number."""
+        return self.references.skn
+
+    @property
+    def lskn(self) -> int:
+        """Return the Laghu Siddhanta Kaumudi number."""
+        return self.references.lskn
+
+    @property
+    def sk_chapter(self) -> int:
+        """Return the Siddhanta Kaumudi chapter."""
+        return self.references.sk_chapter
+
+    @property
+    def lsk_chapter(self) -> int:
+        """Return the Laghu Siddhanta Kaumudi chapter."""
+        return self.references.lsk_chapter
 
     @property
     def devanagari(self) -> str:
         """Return the Sanskrit text in Devanagari."""
-        return self.s
+        return self.text.devanagari
 
     @property
     def transliteration(self) -> str:
         """Return the English transliteration."""
-        return self.e
+        return self.text.transliteration
 
     def __str__(self) -> str:
         """Return a readable string representation."""
-        return f"Sutra {self.reference}: {self.s}"
+        return f"Sutra {self.reference}: {self.text.sanskrit}"
 
     def __repr__(self) -> str:
         """Return a detailed string representation."""
-        return f"Sutra(reference='{self.reference}', text='{self.s}')"
+        return f"Sutra(reference='{self.reference}', text='{self.text.sanskrit}')"
 
 
 @dataclass
@@ -182,7 +286,7 @@ class SutraCollection:
 
         results = []
         for sutra in self.sutras:
-            search_fields = [sutra.s, sutra.e, sutra.ss]
+            search_fields = [sutra.text.sanskrit, sutra.text.english, sutra.ss]
             for field in search_fields:
                 field_text = field if case_sensitive else field.lower()
                 if text in field_text:

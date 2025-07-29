@@ -133,7 +133,9 @@ class TestSutraCollection:
         assert isinstance(last, Sutra)
         # They should be different unless there's only one sutra
         if len(sample_collection) > 1:
-            assert first.i != last.i, "First and last should be different"
+            assert (
+                first.reference != last.reference
+            ), "First and last should be different"
 
     def test_get_by_reference(self, sample_collection):
         """Test getting sutras by reference."""
@@ -142,7 +144,7 @@ class TestSutraCollection:
         found = sample_collection.get_by_reference(first_sutra.reference)
 
         assert found is not None, "Should find the sutra"
-        assert found.i == first_sutra.i, "Should be the same sutra"
+        assert found.reference == first_sutra.reference, "Should be the same sutra"
 
         # Test with non-existent reference
         not_found = sample_collection.get_by_reference("99.99.99")
@@ -175,7 +177,7 @@ class TestSutraCollection:
 
         # All results should contain the search term
         for sutra in results:
-            text_fields = [sutra.s, sutra.e, sutra.ss]
+            text_fields = [sutra.text.sanskrit, sutra.text.english, sutra.ss]
             found = any("वृद्धि" in field for field in text_fields)
             assert found, f"Sutra {sutra.reference} should contain 'वृद्धि'"
 

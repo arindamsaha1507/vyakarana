@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 from typing import Union, Dict, Any
 
-from .models import Sutra, SutraCollection
+from .models import Sutra, SutraCollection, SutraIdentifier, SutraText, SutraReferences
 
 
 def read_sutras(file_path: Union[str, Path]) -> SutraCollection:
@@ -90,7 +90,6 @@ def read_sutras(file_path: Union[str, Path]) -> SutraCollection:
         "an",
         "ad",
         "ss",
-        "rpn",
     ]
 
     for i, sutra_data in enumerate(data["data"]):
@@ -108,27 +107,46 @@ def read_sutras(file_path: Union[str, Path]) -> SutraCollection:
 
         # Create Sutra object
         try:
+            # Convert string values to appropriate types
+            adhyaya = int(sutra_data["a"])
+            pada = int(sutra_data["p"])
+            number = int(sutra_data["n"])
+
+            # Create identifier object
+            identifier = SutraIdentifier(adhyaya=adhyaya, pada=pada, number=number)
+
+            # Create text object
+            text = SutraText(
+                sanskrit=str(sutra_data["s"]), english=str(sutra_data["e"])
+            )
+
+            # Create references object - convert to int, default to 0 for empty/invalid values
+            def safe_int(value, default=0):
+                try:
+                    return int(value) if value and str(value).strip() else default
+                except (ValueError, TypeError):
+                    return default
+
+            references = SutraReferences(
+                skn=safe_int(sutra_data["skn"]),
+                lskn=safe_int(sutra_data["lskn"]),
+                mskn=safe_int(sutra_data["mskn"]),
+                sskn=safe_int(sutra_data["sskn"]),
+                plskn=safe_int(sutra_data["plskn"]),
+                lpn=safe_int(sutra_data["lpn"]),
+                sk_chapter=safe_int(sutra_data["sk_chapter"]),
+                lsk_chapter=safe_int(sutra_data["lsk_chapter"]),
+            )
+
             sutra = Sutra(
-                i=str(sutra_data["i"]),
-                a=str(sutra_data["a"]),
-                p=str(sutra_data["p"]),
-                n=str(sutra_data["n"]),
-                s=str(sutra_data["s"]),
-                e=str(sutra_data["e"]),
-                skn=str(sutra_data["skn"]),
-                lskn=str(sutra_data["lskn"]),
-                mskn=str(sutra_data["mskn"]),
-                sskn=str(sutra_data["sskn"]),
-                plskn=str(sutra_data["plskn"]),
-                lpn=str(sutra_data["lpn"]),
+                identifier=identifier,
+                text=text,
+                references=references,
                 pc=str(sutra_data["pc"]),
-                sk_chapter=str(sutra_data["sk_chapter"]),
-                lsk_chapter=str(sutra_data["lsk_chapter"]),
                 type=str(sutra_data["type"]),
                 an=str(sutra_data["an"]),
                 ad=str(sutra_data["ad"]),
                 ss=str(sutra_data["ss"]),
-                rpn=str(sutra_data["rpn"]),
             )
             sutras.append(sutra)
         except Exception as e:
