@@ -1,0 +1,8 @@
+# Core dependencies
+pydantic>=2.0.0
+
+# Development dependencies (install with: pip install -e .[dev])
+# pytest>=7.0.0
+# black>=22.0.0
+# isort>=5.0.0
+# mypy>=1.0.0
