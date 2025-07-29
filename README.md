@@ -143,7 +143,7 @@ The package includes comprehensive tests in the `tests/` directory.
 # From root directory
 python3 tests/test_sutras.py
 
-# From tests directory  
+# From tests directory
 cd tests
 python3 test_sutras.py
 ```

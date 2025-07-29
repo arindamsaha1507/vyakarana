@@ -101,41 +101,41 @@ def test_data_structure():
 def test_sutra_properties():
     """Test individual sutra properties and methods."""
     print("\nTesting sutra properties...")
-    
+
     current_dir = Path(__file__).parent
     data_file = current_dir.parent / "sutraani" / "data.txt"
-    
+
     try:
         collection = read_sutras(data_file)
-        
+
         if len(collection) == 0:
             print("❌ No sutras to test")
             return False
-        
+
         # Test first sutra properties
         sutra = collection[0]
-        
+
         # Test numeric properties
         assert isinstance(sutra.adhyaya, int), "Adhyaya should be int"
         assert isinstance(sutra.pada, int), "Pada should be int"
         assert isinstance(sutra.number, int), "Number should be int"
         print("✅ Numeric properties work correctly")
-        
+
         # Test string properties
         assert len(sutra.reference) > 0, "Reference should not be empty"
         assert len(sutra.devanagari) > 0, "Devanagari should not be empty"
         assert len(sutra.transliteration) > 0, "Transliteration should not be empty"
         print("✅ String properties work correctly")
-        
+
         # Test string representations
         str_repr = str(sutra)
         repr_repr = repr(sutra)
         assert "Sutra" in str_repr, "String representation should contain 'Sutra'"
         assert "Sutra" in repr_repr, "Repr should contain 'Sutra'"
         print("✅ String representations work correctly")
-        
+
         return True
-        
+
     except Exception as e:
         print(f"❌ Sutra properties test failed: {e}")
         return False
@@ -144,13 +144,13 @@ def test_sutra_properties():
 def test_collection_methods():
     """Test SutraCollection methods."""
     print("\nTesting collection methods...")
-    
+
     current_dir = Path(__file__).parent
     data_file = current_dir.parent / "sutraani" / "data.txt"
-    
+
     try:
         collection = read_sutras(data_file)
-        
+
         # Test iteration
         count = 0
         for _ in collection:
@@ -158,34 +158,36 @@ def test_collection_methods():
             if count > 5:  # Just test a few
                 break
         print(f"✅ Iteration works - tested {count} sutras")
-        
+
         # Test indexing
         first = collection[0]
         last = collection[-1]
         assert first != last, "First and last sutras should be different"
         print("✅ Indexing works correctly")
-        
+
         # Test length
         length = len(collection)
         assert length > 0, "Collection should not be empty"
         print(f"✅ Length method works - {length} sutras")
-        
+
         # Test filtering methods
         adhyaya1 = collection.get_by_adhyaya(1)
         assert len(adhyaya1) > 0, "Should find sutras in adhyaya 1"
         print(f"✅ Adhyaya filtering works - found {len(adhyaya1)} sutras")
-        
+
         pada11 = collection.get_by_pada(1, 1)
         assert len(pada11) > 0, "Should find sutras in pada 1.1"
         print(f"✅ Pada filtering works - found {len(pada11)} sutras")
-        
+
         # Test string representation
         collection_str = str(collection)
-        assert "SutraCollection" in collection_str, "String should contain 'SutraCollection'"
+        assert (
+            "SutraCollection" in collection_str
+        ), "String should contain 'SutraCollection'"
         print("✅ Collection string representation works")
-        
+
         return True
-        
+
     except Exception as e:
         print(f"❌ Collection methods test failed: {e}")
         return False
@@ -201,10 +203,10 @@ if __name__ == "__main__":
         test_sutra_properties,
         test_collection_methods,
     ]
-    
+
     passed = 0
     failed = 0
-    
+
     for test_func in tests:
         try:
             if test_func():
@@ -214,12 +216,12 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"❌ Test {test_func.__name__} failed with exception: {e}")
             failed += 1
-    
+
     print("\n📊 Test Results:")
     print(f"✅ Passed: {passed}")
     print(f"❌ Failed: {failed}")
     print(f"📈 Total: {passed + failed}")
-    
+
     if failed == 0:
         print("\n🎉 All tests completed successfully!")
     else:

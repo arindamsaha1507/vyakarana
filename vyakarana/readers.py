@@ -15,7 +15,7 @@ from .models import Sutra, SutraCollection
 def read_sutras(file_path: Union[str, Path]) -> SutraCollection:
     """
     Read and parse a sutras data file into a SutraCollection.
-    
+
     The file should be in JSON format with the structure:
     {
         "name": "collection_name",
@@ -31,13 +31,13 @@ def read_sutras(file_path: Union[str, Path]) -> SutraCollection:
             ...
         ]
     }
-    
+
     Args:
         file_path: Path to the sutras data file
-        
+
     Returns:
         SutraCollection object containing all the sutras
-        
+
     Raises:
         FileNotFoundError: If the file doesn't exist
         json.JSONDecodeError: If the file is not valid JSON
@@ -45,94 +45,115 @@ def read_sutras(file_path: Union[str, Path]) -> SutraCollection:
         ValueError: If the data structure is invalid
     """
     file_path = Path(file_path)
-    
+
     if not file_path.exists():
         raise FileNotFoundError(f"Sutras data file not found: {file_path}")
-    
+
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON in file {file_path}: {e}") from e
-    
+
     # Validate the basic structure
     if not isinstance(data, dict):
         raise ValueError(f"Expected dict at root level, got {type(data)}")
-    
+
     if "name" not in data:
         raise KeyError("Missing 'name' field in data")
-    
+
     if "data" not in data:
         raise KeyError("Missing 'data' field in data")
-    
+
     if not isinstance(data["data"], list):
         raise ValueError(f"Expected list for 'data' field, got {type(data['data'])}")
-    
+
     # Parse each sutra entry
     sutras = []
     required_fields = [
-        'i', 'a', 'p', 'n', 's', 'e', 'skn', 'lskn', 'mskn', 'sskn', 
-        'plskn', 'lpn', 'pc', 'sk_chapter', 'lsk_chapter', 'type', 
-        'an', 'ad', 'ss', 'rpn'
+        "i",
+        "a",
+        "p",
+        "n",
+        "s",
+        "e",
+        "skn",
+        "lskn",
+        "mskn",
+        "sskn",
+        "plskn",
+        "lpn",
+        "pc",
+        "sk_chapter",
+        "lsk_chapter",
+        "type",
+        "an",
+        "ad",
+        "ss",
+        "rpn",
     ]
-    
+
     for i, sutra_data in enumerate(data["data"]):
         if not isinstance(sutra_data, dict):
-            raise ValueError(f"Expected dict for sutra at index {i}, got {type(sutra_data)}")
-        
+            raise ValueError(
+                f"Expected dict for sutra at index {i}, got {type(sutra_data)}"
+            )
+
         # Check for required fields
         missing_fields = [field for field in required_fields if field not in sutra_data]
         if missing_fields:
-            raise KeyError(f"Missing required fields in sutra at index {i}: {missing_fields}")
-        
+            raise KeyError(
+                f"Missing required fields in sutra at index {i}: {missing_fields}"
+            )
+
         # Create Sutra object
         try:
             sutra = Sutra(
-                i=str(sutra_data['i']),
-                a=str(sutra_data['a']),
-                p=str(sutra_data['p']),
-                n=str(sutra_data['n']),
-                s=str(sutra_data['s']),
-                e=str(sutra_data['e']),
-                skn=str(sutra_data['skn']),
-                lskn=str(sutra_data['lskn']),
-                mskn=str(sutra_data['mskn']),
-                sskn=str(sutra_data['sskn']),
-                plskn=str(sutra_data['plskn']),
-                lpn=str(sutra_data['lpn']),
-                pc=str(sutra_data['pc']),
-                sk_chapter=str(sutra_data['sk_chapter']),
-                lsk_chapter=str(sutra_data['lsk_chapter']),
-                type=str(sutra_data['type']),
-                an=str(sutra_data['an']),
-                ad=str(sutra_data['ad']),
-                ss=str(sutra_data['ss']),
-                rpn=str(sutra_data['rpn'])
+                i=str(sutra_data["i"]),
+                a=str(sutra_data["a"]),
+                p=str(sutra_data["p"]),
+                n=str(sutra_data["n"]),
+                s=str(sutra_data["s"]),
+                e=str(sutra_data["e"]),
+                skn=str(sutra_data["skn"]),
+                lskn=str(sutra_data["lskn"]),
+                mskn=str(sutra_data["mskn"]),
+                sskn=str(sutra_data["sskn"]),
+                plskn=str(sutra_data["plskn"]),
+                lpn=str(sutra_data["lpn"]),
+                pc=str(sutra_data["pc"]),
+                sk_chapter=str(sutra_data["sk_chapter"]),
+                lsk_chapter=str(sutra_data["lsk_chapter"]),
+                type=str(sutra_data["type"]),
+                an=str(sutra_data["an"]),
+                ad=str(sutra_data["ad"]),
+                ss=str(sutra_data["ss"]),
+                rpn=str(sutra_data["rpn"]),
             )
             sutras.append(sutra)
         except Exception as e:
             raise ValueError(f"Error creating Sutra object at index {i}: {e}") from e
-    
+
     return SutraCollection(name=data["name"], sutras=sutras)
 
 
 def _validate_sutra_data(sutra_data: Dict[str, Any], index: int) -> None:
     """
     Validate a single sutra data dictionary.
-    
+
     Args:
         sutra_data: Dictionary containing sutra data
         index: Index of the sutra for error reporting
-        
+
     Raises:
         ValueError: If validation fails
     """
     # Additional validation can be added here
     # For example, checking if 'a', 'p', 'n' are numeric strings
     try:
-        int(sutra_data['a'])  # adhyaya should be numeric
-        int(sutra_data['p'])  # pada should be numeric  
-        int(sutra_data['n'])  # number should be numeric
+        int(sutra_data["a"])  # adhyaya should be numeric
+        int(sutra_data["p"])  # pada should be numeric
+        int(sutra_data["n"])  # number should be numeric
     except (ValueError, TypeError) as exc:
         raise ValueError(f"Sutra at index {index} has invalid numeric fields") from exc
 
@@ -140,40 +161,40 @@ def _validate_sutra_data(sutra_data: Dict[str, Any], index: int) -> None:
 def get_data_file_path(filename: str) -> Path:
     """
     Get the path to a data file in the package.
-    
+
     Args:
         filename: Name of the data file
-        
+
     Returns:
         Path object pointing to the data file
     """
     # This assumes the data files are in the same directory as this module
     # or in a 'data' subdirectory
     current_dir = Path(__file__).parent
-    
+
     # Try current directory first
     file_path = current_dir / filename
     if file_path.exists():
         return file_path
-    
+
     # Try parent directory (where the original files are)
     file_path = current_dir.parent / filename
     if file_path.exists():
         return file_path
-    
+
     # Try specific subdirectories
-    for subdir in ['sutraani', 'data']:
+    for subdir in ["sutraani", "data"]:
         file_path = current_dir.parent / subdir / filename
         if file_path.exists():
             return file_path
-    
+
     raise FileNotFoundError(f"Data file '{filename}' not found in expected locations")
 
 
 def read_sutras_from_package() -> SutraCollection:
     """
     Read the sutras data file that comes with the package.
-    
+
     Returns:
         SutraCollection object containing all the sutras
     """

@@ -13,6 +13,6 @@ __author__ = "Arindam Saha"
 
 __all__ = [
     "Sutra",
-    "SutraCollection", 
+    "SutraCollection",
     "read_sutras",
 ]
