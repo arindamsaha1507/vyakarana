@@ -160,6 +160,10 @@ pytest tests/
 
 See `tests/README.md` for detailed testing information.
 
+## Examples
+
+See `example.py` for comprehensive usage examples.
+
 ## Repository Structure
 
 This repository contains extensive Sanskrit grammatical data:
@@ -189,6 +193,8 @@ This package is built around the rich tradition of Sanskrit grammatical analysis
 - Panini's Ashtadhyayi
 - Traditional commentaries and classifications
 - Modern computational linguistic approaches to Sanskrit
+
+**Data Source**: This package is derived from the comprehensive Sanskrit data repository at [ashtadhyayi/ashtadhyayi](https://github.com/ashtadhyayi/ashtadhyayi), which contains extensive Sanskrit grammatical resources and powers the https://ashtadhyayi.com website.
 
 ## Contact
 
