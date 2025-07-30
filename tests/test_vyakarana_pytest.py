@@ -17,6 +17,9 @@ from vyakarana import read_sutras
 from vyakarana.models import Sutra, SutraCollection
 
 
+# pylint: disable=redefined-outer-name
+
+
 @pytest.fixture
 def data_file_path():
     """Fixture to provide the data file path."""

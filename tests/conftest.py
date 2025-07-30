@@ -11,6 +11,9 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
+# pylint: disable=redefined-outer-name
+
+
 @pytest.fixture(scope="session")
 def data_file():
     """Session-scoped fixture to provide the data file path."""
@@ -22,4 +25,5 @@ def data_file():
 def sample_collection(data_file):
     """Session-scoped fixture to provide a loaded sutra collection."""
     from vyakarana import read_sutras
+
     return read_sutras(data_file)
