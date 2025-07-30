@@ -5,13 +5,9 @@ Run with: pytest tests/test_vyakarana_pytest.py
 """
 
 import json
-import sys
 from pathlib import Path
 
 import pytest
-
-# Add the parent directory to the path to import vyakarana
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from vyakarana import read_sutras
 from vyakarana.models import Sutra, SutraCollection

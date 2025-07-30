@@ -6,11 +6,7 @@ This module contains comprehensive tests for reading and parsing sutra data.
 """
 
 import json
-import sys
 from pathlib import Path
-
-# Add the parent directory to the path to import vyakarana
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from vyakarana import read_sutras
 
@@ -188,7 +184,9 @@ def test_collection_methods():
         raise AssertionError(f"Collection methods test failed: {e}") from e
 
 
-if __name__ == "__main__":
+def main():
+    """Run the test suite."""
+
     print("Vyakarana Package Test Suite")
     print("=" * 50)
 
@@ -226,3 +224,7 @@ if __name__ == "__main__":
         print("\n🎉 All tests completed successfully!")
     else:
         print(f"\n⚠️  {failed} test(s) failed. Please check the output above.")
+
+
+if __name__ == "__main__":
+    main()
