@@ -9,7 +9,14 @@ import json
 from pathlib import Path
 from typing import Union, Dict, Any
 
-from .models import Sutra, SutraCollection, SutraIdentifier, SutraText, SutraReferences
+from .models import (
+    Sutra,
+    SutraCollection,
+    SutraIdentifier,
+    SutraText,
+    SutraReferences,
+    PadaVibhaga,
+)
 
 
 def read_sutras(file_path: Union[str, Path]) -> SutraCollection:
@@ -138,11 +145,20 @@ def read_sutras(file_path: Union[str, Path]) -> SutraCollection:
                 lsk_chapter=safe_int(sutra_data["lsk_chapter"]),
             )
 
+            # Parse pada vibhaga (grammatical analysis)
+            pada_vibhaga = None
+            if sutra_data["pc"]:
+                try:
+                    pada_vibhaga = PadaVibhaga.from_string(str(sutra_data["pc"]))
+                except (ValueError, IndexError):
+                    # If parsing fails, keep it as None
+                    pada_vibhaga = None
+
             sutra = Sutra(
                 identifier=identifier,
                 text=text,
                 references=references,
-                pc=str(sutra_data["pc"]),
+                pada_vibhaga=pada_vibhaga,
                 type=str(sutra_data["type"]),
                 an=str(sutra_data["an"]),
                 ad=str(sutra_data["ad"]),
