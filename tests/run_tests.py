@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     # Get the test file path
     test_file = Path(__file__).parent / "test_sutras.py"
-    
+
     # Check if the test file exists
     if not test_file.exists():
         print(f"Error: Test file not found: {test_file}")
