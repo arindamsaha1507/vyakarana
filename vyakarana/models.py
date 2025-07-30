@@ -338,6 +338,60 @@ class SutraIdentifier:
         """Return a detailed string representation."""
         return f"SutraIdentifier(adhyaya={self.adhyaya}, pada={self.pada}, number={self.number})"
 
+    def __eq__(self, other) -> bool:
+        """Check equality based on adhyaya, pada, and number."""
+        if not isinstance(other, SutraIdentifier):
+            return False
+        return (self.adhyaya, self.pada, self.number) == (
+            other.adhyaya,
+            other.pada,
+            other.number,
+        )
+
+    def __lt__(self, other) -> bool:
+        """Compare ordering based on (adhyaya, pada, number) tuple."""
+        if not isinstance(other, SutraIdentifier):
+            return NotImplemented
+        return (self.adhyaya, self.pada, self.number) < (
+            other.adhyaya,
+            other.pada,
+            other.number,
+        )
+
+    def __le__(self, other) -> bool:
+        """Less than or equal comparison."""
+        if not isinstance(other, SutraIdentifier):
+            return NotImplemented
+        return (self.adhyaya, self.pada, self.number) <= (
+            other.adhyaya,
+            other.pada,
+            other.number,
+        )
+
+    def __gt__(self, other) -> bool:
+        """Greater than comparison."""
+        if not isinstance(other, SutraIdentifier):
+            return NotImplemented
+        return (self.adhyaya, self.pada, self.number) > (
+            other.adhyaya,
+            other.pada,
+            other.number,
+        )
+
+    def __ge__(self, other) -> bool:
+        """Greater than or equal comparison."""
+        if not isinstance(other, SutraIdentifier):
+            return NotImplemented
+        return (self.adhyaya, self.pada, self.number) >= (
+            other.adhyaya,
+            other.pada,
+            other.number,
+        )
+
+    def __hash__(self) -> int:
+        """Return hash value for use in sets and dictionaries."""
+        return hash((self.adhyaya, self.pada, self.number))
+
 
 @dataclass
 class SutraText:
@@ -524,6 +578,40 @@ class Sutra:
         """Return a detailed string representation."""
         return f"Sutra(reference='{self.reference}', text='{self.text.sanskrit}')"
 
+    def __eq__(self, other) -> bool:
+        """Check equality based on sutra identifier."""
+        if not isinstance(other, Sutra):
+            return False
+        return self.identifier == other.identifier
+
+    def __lt__(self, other) -> bool:
+        """Compare ordering based on sutra identifier (adhyaya, pada, number)."""
+        if not isinstance(other, Sutra):
+            return NotImplemented
+        return self.identifier < other.identifier
+
+    def __le__(self, other) -> bool:
+        """Less than or equal comparison."""
+        if not isinstance(other, Sutra):
+            return NotImplemented
+        return self.identifier <= other.identifier
+
+    def __gt__(self, other) -> bool:
+        """Greater than comparison."""
+        if not isinstance(other, Sutra):
+            return NotImplemented
+        return self.identifier > other.identifier
+
+    def __ge__(self, other) -> bool:
+        """Greater than or equal comparison."""
+        if not isinstance(other, Sutra):
+            return NotImplemented
+        return self.identifier >= other.identifier
+
+    def __hash__(self) -> int:
+        """Return hash value for use in sets and dictionaries."""
+        return hash(self.identifier)
+
 
 @dataclass
 class SutraCollection:
@@ -618,6 +706,15 @@ class SutraCollection:
                     break
 
         return results
+
+    def get_sorted(self) -> List[Sutra]:
+        """
+        Get all sutras in sorted order by (adhyaya, pada, number).
+
+        Returns:
+            List of Sutra objects sorted by their identifier
+        """
+        return sorted(self.sutras)
 
     def __str__(self) -> str:
         """Return a readable string representation."""
