@@ -25,7 +25,7 @@ def test_basic_functionality():
 
     if not data_file.exists():
         print(f"❌ Data file not found at {data_file}")
-        return False
+        raise FileNotFoundError(f"Data file not found at {data_file}")
 
     try:
         # Read the sutras
@@ -35,7 +35,7 @@ def test_basic_functionality():
         # Test basic properties
         if len(collection) == 0:
             print("❌ No sutras found in collection")
-            return False
+            raise AssertionError("No sutras found in collection")
 
         # Test first sutra
         first_sutra = collection[0]
@@ -57,11 +57,10 @@ def test_basic_functionality():
         print(f"✅ Found {len(pada_sutras)} sutras in Adhyaya 1, Pada 1")
 
         print("🎉 All tests passed!")
-        return True
 
-    except Exception as e:
+    except (ValueError, FileNotFoundError, KeyError) as e:
         print(f"❌ Error during testing: {e}")
-        return False
+        raise AssertionError(f"Basic functionality test failed: {e}") from e
 
 
 def test_data_structure():
@@ -89,13 +88,11 @@ def test_data_structure():
                     print(f"✅ Field '{field}' present")
                 else:
                     print(f"❌ Field '{field}' missing")
-                    return False
+                    raise AssertionError(f"Required field '{field}' missing from data structure")
 
-        return True
-
-    except Exception as e:
+    except (ValueError, FileNotFoundError, KeyError, TypeError) as e:
         print(f"❌ Data structure test failed: {e}")
-        return False
+        raise AssertionError(f"Data structure test failed: {e}") from e
 
 
 def test_sutra_properties():
@@ -110,7 +107,7 @@ def test_sutra_properties():
 
         if len(collection) == 0:
             print("❌ No sutras to test")
-            return False
+            raise AssertionError("No sutras to test")
 
         # Test first sutra properties
         sutra = collection[0]
@@ -134,11 +131,9 @@ def test_sutra_properties():
         assert "Sutra" in repr_repr, "Repr should contain 'Sutra'"
         print("✅ String representations work correctly")
 
-        return True
-
-    except Exception as e:
+    except (ValueError, AttributeError, TypeError) as e:
         print(f"❌ Sutra properties test failed: {e}")
-        return False
+        raise AssertionError(f"Sutra properties test failed: {e}") from e
 
 
 def test_collection_methods():
@@ -186,11 +181,9 @@ def test_collection_methods():
         ), "String should contain 'SutraCollection'"
         print("✅ Collection string representation works")
 
-        return True
-
-    except Exception as e:
+    except (ValueError, FileNotFoundError, AttributeError, TypeError) as e:
         print(f"❌ Collection methods test failed: {e}")
-        return False
+        raise AssertionError(f"Collection methods test failed: {e}") from e
 
 
 if __name__ == "__main__":
@@ -209,11 +202,10 @@ if __name__ == "__main__":
 
     for test_func in tests:
         try:
-            if test_func():
-                passed += 1
-            else:
-                failed += 1
-        except Exception as e:
+            test_func()
+            print(f"✅ {test_func.__name__} passed")
+            passed += 1
+        except (ValueError, FileNotFoundError, AttributeError, TypeError, AssertionError) as e:
             print(f"❌ Test {test_func.__name__} failed with exception: {e}")
             failed += 1
 
