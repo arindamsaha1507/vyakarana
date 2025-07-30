@@ -71,7 +71,10 @@ class SutraTypeClassification:
 
     def __repr__(self) -> str:
         """Return a detailed string representation."""
-        return f"SutraTypeClassification(sutra_type={self.sutra_type}, explanation='{self.explanation}')"
+        return (
+            f"SutraTypeClassification(sutra_type={self.sutra_type}, "
+            f"explanation='{self.explanation}')"
+        )
 
 
 @dataclass
@@ -231,7 +234,10 @@ class PadaAnalysis:
 
     def __repr__(self) -> str:
         """Return a detailed string representation."""
-        return f"PadaAnalysis(word='{self.word}', gender='{self.gender}', vibhakti={self.vibhakti}, vachana={self.vachana})"
+        return (
+            f"PadaAnalysis(word='{self.word}', gender='{self.gender}', "
+            f"vibhakti={self.vibhakti}, vachana={self.vachana})"
+        )
 
 
 @dataclass
@@ -644,7 +650,10 @@ class SutraCarryover:
 
     def __repr__(self) -> str:
         """Return a detailed string representation."""
-        return f"SutraCarryover(carryover_type={self.carryover_type}, references={self.references}, combined_text='{self.combined_text}')"
+        return (
+            f"SutraCarryover(carryover_type={self.carryover_type}, "
+            f"references={self.references}, combined_text='{self.combined_text}')"
+        )
 
 
 @dataclass
