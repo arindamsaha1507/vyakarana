@@ -16,6 +16,7 @@ from .models import (
     SutraText,
     SutraReferences,
     PadaVibhaga,
+    SutraTypeInfo,
 )
 
 
@@ -154,12 +155,15 @@ def read_sutras(file_path: Union[str, Path]) -> SutraCollection:
                     # If parsing fails, keep it as None
                     pada_vibhaga = None
 
+            # Parse sutra type information
+            sutra_type_info = SutraTypeInfo.from_string(str(sutra_data["type"]))
+
             sutra = Sutra(
                 identifier=identifier,
                 text=text,
                 references=references,
                 pada_vibhaga=pada_vibhaga,
-                type=str(sutra_data["type"]),
+                sutra_type_info=sutra_type_info,
                 an=str(sutra_data["an"]),
                 ad=str(sutra_data["ad"]),
                 ss=str(sutra_data["ss"]),
