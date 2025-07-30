@@ -537,19 +537,80 @@ class SutraCarryover:
         """
         Parse a carryover string into a SutraCarryover object.
 
-        For now, this creates a SutraCarryover with no parsed references,
-        just the combined text. Future versions could parse the format
-        if a specific format is established.
-
         Args:
             carryover_text: The carryover string from the data
             carryover_type: The type of carryover (anuvritti or adhikara)
 
         Returns:
-            SutraCarryover object
+            SutraCarryover object with parsed references
         """
+        references = []
+
+        if not carryover_text or not carryover_text.strip():
+            return cls(
+                carryover_type=carryover_type,
+                references=references,
+                combined_text=carryover_text,
+            )
+
+        # Split by ## to get individual entries
+        entries = carryover_text.split("##")
+
+        for entry in entries:
+            if "$" not in entry:
+                continue
+
+            # Split by $ to separate text from reference parts
+            parts = entry.split("$")
+
+            if len(parts) < 2:
+                continue
+
+            # First part is always the text
+            text = parts[0].strip()
+
+            if carryover_type == CarryoverType.ANUVRITTI:
+                # Anuvritti format: text$reference_number
+                if len(parts) == 2:
+                    ref_str = parts[1].strip()
+                    if len(ref_str) >= 5:  # Format: adhyaya(1)pada(1)number(3+)
+                        try:
+                            adhyaya = int(ref_str[0])
+                            pada = int(ref_str[1])
+                            number = int(ref_str[2:])
+
+                            sutra_id = SutraIdentifier(
+                                adhyaya=adhyaya, pada=pada, number=number
+                            )
+                            reference = SutraReference(
+                                sutra_id=sutra_id, text_portion=text
+                            )
+                            references.append(reference)
+                        except (ValueError, IndexError):
+                            # Skip malformed references
+                            continue
+
+            elif carryover_type == CarryoverType.ADHIKARA:
+                # Adhikara format: text$adhyaya$pada$number
+                if len(parts) == 4:
+                    try:
+                        adhyaya = int(parts[1].strip())
+                        pada = int(parts[2].strip())
+                        number = int(parts[3].strip())
+
+                        sutra_id = SutraIdentifier(
+                            adhyaya=adhyaya, pada=pada, number=number
+                        )
+                        reference = SutraReference(sutra_id=sutra_id, text_portion=text)
+                        references.append(reference)
+                    except (ValueError, IndexError):
+                        # Skip malformed references
+                        continue
+
         return cls(
-            carryover_type=carryover_type, references=[], combined_text=carryover_text
+            carryover_type=carryover_type,
+            references=references,
+            combined_text=carryover_text,
         )
 
     @classmethod
@@ -862,7 +923,7 @@ class SutraCollection:
         """Allow indexing into the sutra collection."""
         return self.sutras[index]
 
-    def get_by_reference(self, reference: str) -> Optional[Sutra]:
+    def get_by_reference(self, reference: SutraReference | str) -> Optional[Sutra]:
         """
         Get a sutra by its reference (e.g., '1.1.1').
 
@@ -872,6 +933,10 @@ class SutraCollection:
         Returns:
             The Sutra object if found, None otherwise
         """
+
+        if isinstance(reference, SutraReference):
+            reference = reference.reference_string
+
         for sutra in self.sutras:
             if sutra.reference == reference:
                 return sutra
