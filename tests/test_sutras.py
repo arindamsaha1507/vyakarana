@@ -88,7 +88,9 @@ def test_data_structure():
                     print(f"✅ Field '{field}' present")
                 else:
                     print(f"❌ Field '{field}' missing")
-                    raise AssertionError(f"Required field '{field}' missing from data structure")
+                    raise AssertionError(
+                        f"Required field '{field}' missing from data structure"
+                    )
 
     except (ValueError, FileNotFoundError, KeyError, TypeError) as e:
         print(f"❌ Data structure test failed: {e}")
@@ -205,7 +207,13 @@ if __name__ == "__main__":
             test_func()
             print(f"✅ {test_func.__name__} passed")
             passed += 1
-        except (ValueError, FileNotFoundError, AttributeError, TypeError, AssertionError) as e:
+        except (
+            ValueError,
+            FileNotFoundError,
+            AttributeError,
+            TypeError,
+            AssertionError,
+        ) as e:
             print(f"❌ Test {test_func.__name__} failed with exception: {e}")
             failed += 1
 

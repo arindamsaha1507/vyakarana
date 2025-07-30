@@ -181,9 +181,9 @@ class PadaAnalysis:
 
     def __post_init__(self):
         """Validate the grammatical information."""
-        if not (0 <= self.vibhakti <= 8):
+        if not 0 <= self.vibhakti <= 8:
             raise ValueError(f"Vibhakti must be between 0 and 8, got {self.vibhakti}")
-        if not (0 <= self.vachana <= 3):
+        if not 0 <= self.vachana <= 3:
             raise ValueError(f"Vachana must be between 0 and 3, got {self.vachana}")
         # Both vibhakti and vachana should be 0 together for avyaya
         if (self.vibhakti == 0) != (self.vachana == 0):
@@ -325,9 +325,9 @@ class SutraIdentifier:
 
     def __post_init__(self):
         """Validate the sutra identifiers after initialization."""
-        if not (1 <= self.adhyaya <= 8):
+        if not 1 <= self.adhyaya <= 8:
             raise ValueError(f"Adhyaya must be between 1 and 8, got {self.adhyaya}")
-        if not (1 <= self.pada <= 4):
+        if not 1 <= self.pada <= 4:
             raise ValueError(f"Pada must be between 1 and 4, got {self.pada}")
         if self.number < 1:
             raise ValueError(f"Sutra number must be positive, got {self.number}")
