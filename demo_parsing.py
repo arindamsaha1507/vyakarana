@@ -11,6 +11,8 @@ from vyakarana import read_sutras
 
 
 def main():
+    """Main function to run the parsing demonstration."""
+
     print("🔬 Sanskrit Sutra Carryover Parsing Demo")
     print("=" * 50)
 
