@@ -1,15 +1,15 @@
 """
-Data readers for Sanskrit Grammar (Vyakarana) data files.
+Data readers for Ashtadhyayi Sanskrit Grammar data files.
 
-This module provides functions to read and parse various data formats
-used in the vyakarana package, including sutras and other grammatical data.
+This module provides functions to read and parse Ashtadhyayi sutras data
+files into structured objects.
 """
 
 import json
 from pathlib import Path
 from typing import Union, Dict, Any
 
-from .models import (
+from vyakarana.models import (
     Sutra,
     SutraCollection,
     SutraIdentifier,
@@ -225,9 +225,14 @@ def get_data_file_path(filename: str) -> Path:
     if file_path.exists():
         return file_path
 
+    # Try going up two levels (readers/vyakarana/filename)
+    file_path = current_dir.parent.parent / filename
+    if file_path.exists():
+        return file_path
+
     # Try specific subdirectories
     for subdir in ["sutraani", "data"]:
-        file_path = current_dir.parent / subdir / filename
+        file_path = current_dir.parent.parent / subdir / filename
         if file_path.exists():
             return file_path
 
