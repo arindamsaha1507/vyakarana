@@ -17,6 +17,7 @@ from .models import (
     SutraReferences,
     PadaVibhaga,
     SutraTypeInfo,
+    Backlinks,
 )
 
 
@@ -158,14 +159,18 @@ def read_sutras(file_path: Union[str, Path]) -> SutraCollection:
             # Parse sutra type information
             sutra_type_info = SutraTypeInfo.from_string(str(sutra_data["type"]))
 
+            # Parse backlinks (anuvritti and adhikara)
+            backlinks = Backlinks.from_strings(
+                str(sutra_data["an"]), str(sutra_data["ad"])
+            )
+
             sutra = Sutra(
                 identifier=identifier,
                 text=text,
                 references=references,
                 pada_vibhaga=pada_vibhaga,
                 sutra_type_info=sutra_type_info,
-                an=str(sutra_data["an"]),
-                ad=str(sutra_data["ad"]),
+                backlinks=backlinks,
                 ss=str(sutra_data["ss"]),
             )
             sutras.append(sutra)

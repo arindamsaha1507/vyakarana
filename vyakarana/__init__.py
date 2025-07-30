@@ -11,6 +11,7 @@ from .models import (
     SutraIdentifier,
     SutraText,
     SutraReferences,
+    SutraReference,
     SutraType,
     SutraTypeClassification,
     SutraTypeInfo,
@@ -18,6 +19,9 @@ from .models import (
     Vachana,
     PadaAnalysis,
     PadaVibhaga,
+    SutraCarryover,
+    CarryoverType,
+    Backlinks,
 )
 from .readers import read_sutras
 
@@ -30,6 +34,7 @@ __all__ = [
     "SutraIdentifier",
     "SutraText",
     "SutraReferences",
+    "SutraReference",
     "SutraType",
     "SutraTypeClassification",
     "SutraTypeInfo",
@@ -37,5 +42,8 @@ __all__ = [
     "Vachana",
     "PadaAnalysis",
     "PadaVibhaga",
+    "SutraCarryover",
+    "CarryoverType",
+    "Backlinks",
     "read_sutras",
 ]
