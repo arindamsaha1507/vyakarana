@@ -7,8 +7,8 @@ This module defines classes for representing anuvritti and adhikara carryover fr
 from dataclasses import dataclass
 from typing import List
 
-from vyakarana.models.enums import CarryoverType
-from vyakarana.models.identifiers import SutraIdentifier, SutraReference
+from .enums import CarryoverType
+from .identifiers import SutraIdentifier, SutraReference
 
 
 @dataclass

@@ -7,12 +7,12 @@ This module defines the main Sutra and SutraCollection classes.
 from dataclasses import dataclass
 from typing import List, Optional
 
-from vyakarana.models.enums import SutraType
-from vyakarana.models.identifiers import SutraIdentifier, SutraReference
-from vyakarana.models.text_models import SutraText, SutraReferences
-from vyakarana.models.analysis import PadaVibhaga
-from vyakarana.models.classification import SutraTypeClassification, SutraTypeInfo
-from vyakarana.models.carryover import SutraCarryover, Backlinks
+from .enums import SutraType
+from .identifiers import SutraIdentifier, SutraReference
+from .text_models import SutraText, SutraReferences
+from .analysis import PadaVibhaga
+from .classification import SutraTypeClassification, SutraTypeInfo
+from .carryover import SutraCarryover, Backlinks
 
 
 @dataclass

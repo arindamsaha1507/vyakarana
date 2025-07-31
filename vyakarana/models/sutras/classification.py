@@ -7,7 +7,7 @@ This module defines classes for representing sutra type classifications.
 from dataclasses import dataclass
 from typing import List, Optional
 
-from vyakarana.models.enums import SutraType
+from .enums import SutraType
 
 
 @dataclass
