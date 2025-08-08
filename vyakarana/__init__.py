@@ -6,22 +6,22 @@ including sutras, dhatus (verbal roots), and other linguistic resources.
 """
 
 from .models import (
+    Backlinks,
+    CarryoverType,
+    PadaAnalysis,
+    PadaVibhaga,
     Sutra,
+    SutraCarryover,
     SutraCollection,
     SutraIdentifier,
-    SutraText,
-    SutraReferences,
     SutraReference,
+    SutraReferences,
+    SutraText,
     SutraType,
     SutraTypeClassification,
     SutraTypeInfo,
-    Vibhakti,
     Vachana,
-    PadaAnalysis,
-    PadaVibhaga,
-    SutraCarryover,
-    CarryoverType,
-    Backlinks,
+    Vibhakti,
 )
 from .readers import read_sutras
 

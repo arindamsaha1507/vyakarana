@@ -6,20 +6,21 @@ including identifiers, text models, analysis, classification, carryover
 mechanisms, and core sutra representations.
 """
 
-# Import enums first (no dependencies)
-from .enums import Vibhakti, Vachana, SutraType, CarryoverType
-
-# Import base classes (depend on enums)
-from .identifiers import SutraIdentifier, SutraReference
-from .text_models import SutraText, SutraReferences
 from .analysis import PadaAnalysis, PadaVibhaga
-from .classification import SutraTypeClassification, SutraTypeInfo
 
 # Import carryover classes (depend on enums and identifiers)
-from .carryover import SutraCarryover, Backlinks
+from .carryover import Backlinks, SutraCarryover
+from .classification import SutraTypeClassification, SutraTypeInfo
 
 # Import core classes (depend on all others)
 from .core import Sutra, SutraCollection
+
+# Import enums first (no dependencies)
+from .enums import CarryoverType, SutraType, Vachana, Vibhakti
+
+# Import base classes (depend on enums)
+from .identifiers import SutraIdentifier, SutraReference
+from .text_models import SutraReferences, SutraText
 
 # Public API
 __all__ = [

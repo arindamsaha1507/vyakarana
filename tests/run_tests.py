@@ -9,7 +9,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 if __name__ == "__main__":
     print("Running Vyakarana test suite...")
     print("=" * 50)

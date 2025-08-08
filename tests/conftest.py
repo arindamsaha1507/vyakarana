@@ -8,7 +8,6 @@ import pytest
 
 from vyakarana import read_sutras
 
-
 # pylint: disable=redefined-outer-name
 
 

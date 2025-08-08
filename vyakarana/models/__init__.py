@@ -6,30 +6,23 @@ organized by grammatical entity type (sutras, dhatus, vartikas, etc.).
 """
 
 # Import all sutra-related models from the sutras subpackage
-from .sutras import (
-    # Enums
-    Vibhakti,
-    Vachana,
-    SutraType,
+from .sutras import (  # Enums; Identifiers; Text models; Analysis; Classification; Carryover; Core
+    Backlinks,
     CarryoverType,
-    # Identifiers
-    SutraIdentifier,
-    SutraReference,
-    # Text models
-    SutraText,
-    SutraReferences,
-    # Analysis
     PadaAnalysis,
     PadaVibhaga,
-    # Classification
+    Sutra,
+    SutraCarryover,
+    SutraCollection,
+    SutraIdentifier,
+    SutraReference,
+    SutraReferences,
+    SutraText,
+    SutraType,
     SutraTypeClassification,
     SutraTypeInfo,
-    # Carryover
-    SutraCarryover,
-    Backlinks,
-    # Core
-    Sutra,
-    SutraCollection,
+    Vachana,
+    Vibhakti,
 )
 
 # Public API - maintain backward compatibility

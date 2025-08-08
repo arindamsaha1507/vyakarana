@@ -12,7 +12,6 @@ import pytest
 from vyakarana import read_sutras
 from vyakarana.models import Sutra, SutraCollection
 
-
 # pylint: disable=redefined-outer-name
 
 

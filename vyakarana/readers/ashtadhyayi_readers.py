@@ -7,17 +7,17 @@ files into structured objects.
 
 import json
 from pathlib import Path
-from typing import Union, Dict, Any
+from typing import Any, Dict, Union
 
 from vyakarana.models import (
+    Backlinks,
+    PadaVibhaga,
     Sutra,
     SutraCollection,
     SutraIdentifier,
-    SutraText,
     SutraReferences,
-    PadaVibhaga,
+    SutraText,
     SutraTypeInfo,
-    Backlinks,
 )
 
 
