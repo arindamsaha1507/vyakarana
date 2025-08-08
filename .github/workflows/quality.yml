@@ -1,0 +1,57 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [master, main, develop]
+  pull_request:
+    branches: [master, main, develop]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-quality-${{ hashFiles('**/setup.py') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-quality-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+
+      - name: Code formatting with black
+        run: |
+          black --check --diff vyakarana/ tests/
+
+      - name: Import sorting with isort
+        run: |
+          isort --check-only --diff vyakarana/ tests/
+
+      - name: Linting with flake8
+        run: |
+          pip install flake8
+          flake8 vyakarana/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 vyakarana/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+
+      - name: Security check with bandit
+        run: |
+          pip install bandit
+          bandit -r vyakarana/ -f json -o bandit-report.json || true
+
+      - name: Upload bandit report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: bandit-report
+          path: bandit-report.json

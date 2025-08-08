@@ -30,6 +30,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Topic :: Education",
         "Topic :: Text Processing :: Linguistic",
     ],
@@ -44,10 +45,19 @@ setup(
             "black>=22.0.0",
             "isort>=5.0.0",
             "mypy>=1.0.0",
+            "flake8>=6.0.0",
+            "bandit>=1.7.0",
+            "coverage>=7.0.0",
         ],
         "test": [
             "pytest>=7.0.0",
             "pytest-cov>=4.0.0",
+            "coverage>=7.0.0",
+        ],
+        "security": [
+            "bandit>=1.7.0",
+            "safety>=2.3.0",
+            "pip-audit>=2.6.0",
         ],
     },
     package_data={

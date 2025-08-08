@@ -1,17 +1,20 @@
 # Makefile for Vyakarana package development
 
-.PHONY: help test test-verbose install install-dev clean lint format
+.PHONY: help test test-verbose install install-dev clean lint format quality ci-check
 
 help:
 	@echo "Available targets:"
 	@echo "  test         - Run tests using the standalone test runner"
 	@echo "  test-verbose - Run tests with verbose output"
 	@echo "  test-pytest  - Run tests using pytest (requires pytest installation)"
+	@echo "  test-coverage- Run tests with coverage reporting"
 	@echo "  install      - Install the package in development mode"
 	@echo "  install-dev  - Install package with development dependencies"
 	@echo "  clean        - Remove build artifacts and cache files"
 	@echo "  lint         - Run basic linting (if tools are available)"
 	@echo "  format       - Format code (if tools are available)"
+	@echo "  quality      - Run all quality checks (local CI simulation)"
+	@echo "  ci-check     - Run the same checks as GitHub Actions"
 
 test:
 	python3 tests/test_sutras.py
@@ -21,6 +24,11 @@ test-verbose:
 
 test-pytest:
 	pytest tests/ -v
+
+test-coverage:
+	coverage run -m pytest tests/
+	coverage report
+	coverage html
 
 install:
 	pip install -e .
@@ -32,15 +40,29 @@ clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
 	find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
-	rm -rf build/ dist/ .pytest_cache/ 2>/dev/null || true
+	rm -rf build/ dist/ .pytest_cache/ htmlcov/ coverage.xml .coverage 2>/dev/null || true
 
 lint:
 	@command -v flake8 >/dev/null 2>&1 && flake8 vyakarana/ tests/ || echo "flake8 not installed"
-	@command -v mypy >/dev/null 2>&1 && mypy vyakarana/ || echo "mypy not installed"
+	@command -v mypy >/dev/null 2>&1 && mypy vyakarana/ --ignore-missing-imports || echo "mypy not installed"
 
 format:
 	@command -v black >/dev/null 2>&1 && black vyakarana/ tests/ || echo "black not installed"
 	@command -v isort >/dev/null 2>&1 && isort vyakarana/ tests/ || echo "isort not installed"
+
+quality:
+	@echo "🚀 Running local quality checks (simulating CI/CD)..."
+	@python scripts/check_quality.py
+
+ci-check:
+	@echo "🔍 Running CI checks locally..."
+	black --check --diff vyakarana/ tests/
+	isort --check-only --diff vyakarana/ tests/
+	flake8 vyakarana/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
+	mypy vyakarana/ --ignore-missing-imports --no-strict-optional
+	pytest tests/ -v
+	coverage run -m pytest tests/
+	coverage report
 
 # Show package info
 info:
