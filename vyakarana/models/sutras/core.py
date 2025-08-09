@@ -209,7 +209,7 @@ class SutraCollection:
         """Allow iteration over sutras."""
         return iter(self.sutras)
 
-    def __getitem__(self, index) -> Sutra:
+    def __getitem__(self, index: int) -> Sutra:
         """Allow indexing into the sutra collection."""
         return self.sutras[index]
 

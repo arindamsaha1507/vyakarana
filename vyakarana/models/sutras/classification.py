@@ -57,7 +57,7 @@ class SutraTypeInfo:
         """Allow iteration over classifications."""
         return iter(self.classifications)
 
-    def __getitem__(self, index) -> SutraTypeClassification:
+    def __getitem__(self, index: int) -> SutraTypeClassification:
         """Allow indexing into the classifications."""
         return self.classifications[index]
 

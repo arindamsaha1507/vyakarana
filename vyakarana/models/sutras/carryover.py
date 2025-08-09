@@ -40,7 +40,7 @@ class SutraCarryover:
         """Allow iteration over the references."""
         return iter(self.references)
 
-    def __getitem__(self, index) -> SutraReference:
+    def __getitem__(self, index: int) -> SutraReference:
         """Allow indexing into the references."""
         return self.references[index]
 
@@ -58,7 +58,7 @@ class SutraCarryover:
         Returns:
             SutraCarryover object with parsed references
         """
-        references = []
+        references: list[SutraReference] = []
 
         if not carryover_text or not carryover_text.strip():
             return cls(

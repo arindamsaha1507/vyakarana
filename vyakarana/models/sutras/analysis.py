@@ -102,7 +102,7 @@ class PadaVibhaga:
         """Allow iteration over word analyses."""
         return iter(self.words)
 
-    def __getitem__(self, index) -> PadaAnalysis:
+    def __getitem__(self, index: int) -> PadaAnalysis:
         """Allow indexing into the word analyses."""
         return self.words[index]
 
