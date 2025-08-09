@@ -4,7 +4,7 @@
 [![Quality](https://github.com/arindamsaha1507/vyakarana/actions/workflows/quality.yml/badge.svg)](https://github.com/arindamsaha1507/vyakarana/actions/workflows/quality.yml)
 [![Security](https://github.com/arindamsaha1507/vyakarana/actions/workflows/security.yml/badge.svg)](https://github.com/arindamsaha1507/vyakarana/actions/workflows/security.yml)
 [![codecov](https://codecov.io/gh/arindamsaha1507/vyakarana/branch/master/graph/badge.svg)](https://codecov.io/gh/arindamsaha1507/vyakarana)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A Python package for working with Sanskrit grammatical data, particularly Panini's Ashtadhyayi sutras and related linguistic resources.
