@@ -182,36 +182,37 @@ class TestSutraCarryover:
     def test_from_string_malformed_incomplete_parts(self):
         """Test parsing malformed string with incomplete parts."""
         text = "वृद्धिः$"
-        carryover = SutraCarryover.from_string(text, CarryoverType.ANUVRITTI)
 
-        assert len(carryover.references) == 0
+        with pytest.raises(IndexError):
+            SutraCarryover.from_string(text, CarryoverType.ANUVRITTI)
 
     def test_from_string_malformed_short_reference(self):
         """Test parsing malformed anuvritti with short reference."""
         text = "वृद्धिः$11"  # Too short for adhyaya+pada+number
-        carryover = SutraCarryover.from_string(text, CarryoverType.ANUVRITTI)
 
-        assert len(carryover.references) == 0
+        with pytest.raises(ValueError):
+            SutraCarryover.from_string(text, CarryoverType.ANUVRITTI)
 
     def test_from_string_malformed_invalid_numbers(self):
         """Test parsing with invalid number formats."""
         # Invalid anuvritti
         text = "वृद्धिः$abc"
-        carryover = SutraCarryover.from_string(text, CarryoverType.ANUVRITTI)
-        assert len(carryover.references) == 0
+
+        with pytest.raises(ValueError):
+            SutraCarryover.from_string(text, CarryoverType.ANUVRITTI)
 
         # Invalid adhikara
         text = "गुणः$a$b$c"
         carryover = SutraCarryover.from_string(text, CarryoverType.ADHIKARA)
         assert len(carryover.references) == 0
 
-    # def test_anuvritti_from_string(self):
-    #     """Test anuvritti_from_string class method."""
-    #     text = "वृद्धिः$111"
-    #     carryover = SutraCarryover.anuvritti_from_string(text)
+    def test_anuvritti_from_string(self):
+        """Test anuvritti_from_string class method."""
+        text = "वृद्धिः$111"
+        carryover = SutraCarryover.anuvritti_from_string(text)
 
-    #     assert carryover.carryover_type == CarryoverType.ANUVRITTI
-    #     assert len(carryover.references) == 1
+        assert carryover.carryover_type == CarryoverType.ANUVRITTI
+        assert len(carryover.references) == 1
 
     def test_adhikara_from_string(self):
         """Test adhikara_from_string class method."""
@@ -328,38 +329,38 @@ class TestBacklinks:
         with pytest.raises(ValueError, match="adhikara field must be of type ADHIKARA"):
             Backlinks(anuvritti=anuvritti, adhikara=wrong_adhikara)
 
-    # def test_from_strings(self):
-    #     """Test creating Backlinks from string data."""
-    #     anuvritti_text = "वृद्धिः$111"
-    #     adhikara_text = "गुणः$1$1$3"
+    def test_from_strings(self):
+        """Test creating Backlinks from string data."""
+        anuvritti_text = "वृद्धिः$111"
+        adhikara_text = "गुणः$1$1$3"
 
-    #     backlinks = Backlinks.from_strings(anuvritti_text, adhikara_text)
+        backlinks = Backlinks.from_strings(anuvritti_text, adhikara_text)
 
-    #     assert backlinks.anuvritti.is_anuvritti
-    #     assert backlinks.adhikara.is_adhikara
-    #     assert backlinks.anuvritti.combined_text == anuvritti_text
-    #     assert backlinks.adhikara.combined_text == adhikara_text
-    #     assert len(backlinks.anuvritti.references) == 1
-    #     assert len(backlinks.adhikara.references) == 1
+        assert backlinks.anuvritti.is_anuvritti
+        assert backlinks.adhikara.is_adhikara
+        assert backlinks.anuvritti.combined_text == anuvritti_text
+        assert backlinks.adhikara.combined_text == adhikara_text
+        assert len(backlinks.anuvritti.references) == 1
+        assert len(backlinks.adhikara.references) == 1
 
 
 class TestSutraCarryoverEdgeCases:
     """Test edge cases and complex scenarios for SutraCarryover."""
 
-    # def test_complex_anuvritti_parsing(self):
-    #     """Test parsing complex anuvritti with multiple large numbers."""
-    #     text = "उपदेशः$1127##सनादिकः$3101"
-    #     carryover = SutraCarryover.from_string(text, CarryoverType.ANUVRITTI)
+    def test_complex_anuvritti_parsing(self):
+        """Test parsing complex anuvritti with multiple large numbers."""
+        text = "उपदेशः$1127##सनादिकः$3101"
+        carryover = SutraCarryover.from_string(text, CarryoverType.ANUVRITTI)
 
-    #     assert len(carryover.references) == 2
+        assert len(carryover.references) == 2
 
-    #     # First reference: 1.1.27
-    #     assert carryover.references[0].text_portion == "उपदेशः"
-    #     assert carryover.references[0].sutra_id.reference == "1.1.27"
+        # First reference: 1.1.27
+        assert carryover.references[0].text_portion == "उपदेशः"
+        assert carryover.references[0].sutra_id.reference == "1.1.27"
 
-    #     # Second reference: 3.1.01 -> 3.1.1
-    #     assert carryover.references[1].text_portion == "सनादिकः"
-    #     assert carryover.references[1].sutra_id.reference == "3.1.1"
+        # Second reference: 3.1.01 -> 3.1.1
+        assert carryover.references[1].text_portion == "सनादिकः"
+        assert carryover.references[1].sutra_id.reference == "3.1.1"
 
     def test_large_adhyaya_pada_numbers(self):
         """Test parsing with large adhyaya and pada numbers."""
@@ -370,21 +371,21 @@ class TestSutraCarryoverEdgeCases:
         assert carryover.references[0].text_portion == "परिभाषा"
         assert carryover.references[0].sutra_id.reference == "8.4.127"
 
-    # def test_mixed_valid_invalid_entries(self):
-    #     """Test parsing with mix of valid and invalid entries."""
-    #     text = "valid$111##invalid##another$222##malformed$1$2"
-    #     carryover = SutraCarryover.from_string(text, CarryoverType.ANUVRITTI)
+    def test_mixed_valid_invalid_entries(self):
+        """Test parsing with mix of valid and invalid entries."""
+        text = "valid$111##invalid##another$222##malformed$1$2"
+        carryover = SutraCarryover.from_string(text, CarryoverType.ANUVRITTI)
 
-    #     # Should only parse the valid entries
-    #     assert len(carryover.references) == 2
-    #     assert carryover.references[0].text_portion == "valid"
-    #     assert carryover.references[1].text_portion == "another"
+        # Should only parse the valid entries
+        assert len(carryover.references) == 2
+        assert carryover.references[0].text_portion == "valid"
+        assert carryover.references[1].text_portion == "another"
 
-    # def test_empty_entries_in_string(self):
-    #     """Test parsing with empty entries."""
-    #     text = "##valid$111####another$222##"
-    #     carryover = SutraCarryover.from_string(text, CarryoverType.ANUVRITTI)
+    def test_empty_entries_in_string(self):
+        """Test parsing with empty entries."""
+        text = "##valid$111####another$222##"
+        carryover = SutraCarryover.from_string(text, CarryoverType.ANUVRITTI)
 
-    #     assert len(carryover.references) == 2
-    #     assert carryover.references[0].text_portion == "valid"
-    #     assert carryover.references[1].text_portion == "another"
+        assert len(carryover.references) == 2
+        assert carryover.references[0].text_portion == "valid"
+        assert carryover.references[1].text_portion == "another"

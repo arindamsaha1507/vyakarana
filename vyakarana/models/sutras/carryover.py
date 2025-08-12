@@ -70,6 +70,11 @@ class SutraCarryover:
         # Split by ## to get individual entries
         entries = carryover_text.split("##")
 
+        print(
+            "Entries found in carryover text:",
+            [entry.strip() for entry in entries if entry.strip()],
+        )
+
         for entry in entries:
             if "$" not in entry:
                 continue
@@ -87,22 +92,15 @@ class SutraCarryover:
                 # Anuvritti format: text$reference_number
                 if len(parts) == 2:
                     ref_str = parts[1].strip()
-                    if len(ref_str) >= 5:  # Format: adhyaya(1)pada(1)number(3+)
-                        try:
-                            adhyaya = int(ref_str[0])
-                            pada = int(ref_str[1])
-                            number = int(ref_str[2:])
+                    adhyaya = int(ref_str[0])
+                    pada = int(ref_str[1])
+                    number = int(ref_str[2:])
 
-                            sutra_id = SutraIdentifier(
-                                adhyaya=adhyaya, pada=pada, number=number
-                            )
-                            reference = SutraReference(
-                                sutra_id=sutra_id, text_portion=text
-                            )
-                            references.append(reference)
-                        except (ValueError, IndexError):
-                            # Skip malformed references
-                            continue
+                    sutra_id = SutraIdentifier(
+                        adhyaya=adhyaya, pada=pada, number=number
+                    )
+                    reference = SutraReference(sutra_id=sutra_id, text_portion=text)
+                    references.append(reference)
 
             elif carryover_type == CarryoverType.ADHIKARA:
                 # Adhikara format: text$adhyaya$pada$number
